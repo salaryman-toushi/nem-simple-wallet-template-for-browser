@@ -14,14 +14,14 @@ If you import privateKey generated with other NEM wallet application, you can us
 * 扱えるNEMアカウントは一つのみ。You can only manage only one NEM account.
 * 登録したアカウントの秘密鍵、公開鍵、アドレスの表示、非表示、削除。You can show, hide and delete your privateKey, publicKey and Address.
 * 保有しているXEM、モザイクの残高表示。You can show balances of XEM and any Mosaics.
-* 直近25件までのトランザクション履歴の表示。You can show latest 25 transaction history.
+* 直近25件までのトランザクション履歴の表示。You can show latest 25 transaction history.  
 ** xemのみのトランザクションの残高等の表示は可能。You can show XEM balances in the transaction history window.
-** mosaicを含むトランザクションは適切な残高の表示は不可能(全て1mosaicsと表示される)。You can't show right mosaic balances in the transaction history window.
+** mosaicを含むトランザクションは適切な残高の表示は不可能(全て1mosaicsと表示される)。You can't show right mosaic balances in the transaction history window.  
 ** メッセージの暗号化がされたトランザクションが直近25件のトランザクションに含まれる場合はエラーとなる可能性あり。If there are some transactions contained mosaics in your latest 25 transactions, error may occur. 
-* XEMの送付。You can transfer XEM.
-** 平文メッセージは添付可能 You can add message not encrypted.
-** 暗号化メッセージの送付は未対応 You can't add message encrypted.
-** モザイクの送付は未対応
+* XEMの送付。You can transfer XEM.  
+** 平文メッセージは添付可能 You can add message not encrypted.  
+** 暗号化メッセージの送付は未対応 You can't add message encrypted.  
+** モザイクの送付は未対応  
 ## ご利用方法 Setup
 このレポジトリ上のファイルを全て適当な単一フォルダに配置し、index.htmlファイルをGoogle Chromeで起動してください。
 ## NEMが切り開いていくより良い世界の可能性を楽しみにしています。 I am looking forward to wonderful new world achieved by NEM. Thank you!
