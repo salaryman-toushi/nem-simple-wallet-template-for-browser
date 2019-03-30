@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "utf-8">
+        <script src="nem-sdk.js"></script>
+        <script>
+            //ライブラリロード
+            var nem = require("nem-sdk").default;
+            //秘密鍵の登録
+            var registerPrivateKey = function(){
+                var privateKey = document.getElementById('idPrivateKey').value;
+                var keyPair = nem.crypto.keyPair.create(privateKey);
+                var publicKey = keyPair.publicKey.toString();
+                var address = nem.model.address.toAddress(publicKey, 104);  //104はメインネットを示す
+                var isValid = nem.model.address.isValid(address);   //生成したアドレスが適切なNEMアドレスかチェック
+                if(isValid){
+                    localStorage.privateKey = privateKey;
+                    localStorage.publicKey = publicKey;
+                    localStorage.address = address;
+                    var message = "秘密鍵(privateKey)\n" + localStorage.privateKey + "\n" + "公開鍵(publicKey)\n" + localStorage.publicKey + "\n" + "アドレス(address)\n" + localStorage.address + "\nをブラウザのローカルストレージに登録しました。"
+                    alert(message);
+                    document.getElementById('checkPrivateKey').value = localStorage.privateKey;
+                    document.getElementById('checkPublicKey').value = localStorage.publicKey;
+                    document.getElementById('checkAddress').value = localStorage.address;
+                }
+                else{
+                    alert('登録した秘密鍵から生成したアドレスが不正です！秘密鍵を再確認して登録してください。(ERR)');
+                }
+                document.getElementById('idPrivateKey').value = "";
+            }
+            //登録済のアカウント情報を表示
+            var showInformation = function(){
+                document.getElementById('checkPrivateKey').value = localStorage.privateKey;
+                document.getElementById('checkPublicKey').value = localStorage.publicKey;
+                document.getElementById('checkAddress').value = localStorage.address;
+            }
+            //登録済のアカウント情報を非表示
+            var hideInformation = function(){
+                document.getElementById('checkPrivateKey').value = "";
+                document.getElementById('checkPublicKey').value = "";
+                document.getElementById('checkAddress').value = "";
+            }
+            //アカウント情報の削除
+            var clearPrivateKey = function(){
+                delete localStorage.privateKey;
+                delete localStorage.publicKey;
+                delete localStorage.address;
+                alert('登録した秘密鍵の情報を削除しました。(privateKey data delete is completed!)');
+                document.getElementById('checkPrivateKey').value = "";
+                document.getElementById('checkPublicKey').value = "";
+                document.getElementById('checkAddress').value = "";
+            }
+        </script>
+    </head>
+    <body>
+        <p><button onclick="location.href='./index.html'">ホームに戻る(Back to Home)</button></p>
+        <h2>アカウント設定(Account Setting)</h2>
+        <h3>秘密鍵の登録(privateKey Registration)</h3>
+        <p><input id="idPrivateKey" type="text" size="70"></input></p>
+        <p><button onclick="registerPrivateKey()">秘密鍵を登録(privateKey registration)</button></p>
+        <h3>登録済情報の管理(manage Account Information)</h3>
+        <p><button onclick="showInformation()">アカウント情報表示(show Account Information)</button></p>
+        <p><button onclick="hideInformation()">アカウント情報非表示(hide Account Information)</button></p>
+        <p><button onclick="clearPrivateKey()">アカウント情報削除(delete Account Information)</button></p>
+        <h3>アカウント情報(Account Information)</h3>
+        <p><input id="checkPrivateKey" type="text" readonly="readonly" size="70"></input></p>
+        <p><input id="checkPublicKey" type="text" readonly="readonly" size="70"></input></p>
+        <p><input id="checkAddress" type="text" readonly="readonly" size="50"></input></p>
+    </body>
+</html>

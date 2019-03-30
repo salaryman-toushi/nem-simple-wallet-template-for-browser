@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "utf-8">
+        <script src="nem-sdk.js"></script>
+    </head>
+    <body>
+        <p><button onclick="location.href='./index.html'">ホームに戻る(Back to Home)</button></p>
+        <h2>トランザクション履歴</h2>
+        <h3>未承認(Unconfirmed)</h3>
+        <p id="idUnconfirmed" readonly="readonly" cols="50"></p>
+        <h3>承認済(Confirmed)</h3>
+        <p id="idConfirmed" readonly="readonly" cols="50"></p>
+        <script>
+            //ライブラリロード
+            var nem = require("nem-sdk").default;
+            //エンドポイント設定
+            var endpoint = nem.model.objects.create('endpoint')(nem.model.nodes.defaultMainnet, nem.model.nodes.defaultPort);
+            //未承認済トランザクションの取得
+            nem.com.requests.account.transactions.unconfirmed(endpoint, localStorage.address).then(
+                function(res){
+                    tableData = "<table><tr><th>日時(time)</th><th>方向(in or out)</th><th>アドレス(address)</th><th>残高変動(ammount)</th><th>メッセージ(message)</th></tr>";
+                    for(i = 0; i < res.data.length; i++){
+                        var nemTimeStamp = res.data[i].transaction.timeStamp;
+                        var timeStamp = new Date(Date.UTC(2015, 3, 29, 0, 6, 25, 0) + (nemTimeStamp * 1000));
+                        var tempAddress;
+                        var recipientAddress = res.data[i].transaction.recipient;
+                        var signerPublicKey = res.data[i].transaction.signer;
+                        var senderAddress = nem.model.address.toAddress(signerPublicKey, 104);
+                        var tempAddress;
+                        var ammount = res.data[i].transaction.amount / 1000000;
+                        var tempAmmount;
+                        var mosaics = res.data[i].transaction.mosaics;
+                        var units;
+                        var message;
+                        //メッセージが空のトランザクションの条件分岐
+                        if(res.data[i].transaction.message == null){
+                            message = undefined;
+                        }else{
+                            message = nem.utils.format.hexToUtf8(res.data[i].transaction.message.payload);
+                        }
+                        var inOrOut;
+                        //送付、受取いずれかによっての条件分岐
+                        if(recipientAddress == localStorage.address){
+                            inOrOut = "受取(in)";
+                            tempAddress = senderAddress;
+                            tempAmmount = ammount;
+                        }else{
+                            inOrOut = "送付(out)";
+                            tempAddress = recipientAddress;
+                            tempAmmount = - 1 * ammount;
+                        }
+                        //トランザクションにモザイクを含むか否かによっての条件分岐(モザイクのトランザクション表示は20190330現時点では上手く扱えていない)
+                        if(mosaics == null){
+                            units = "[nem:xem]";
+                        }else{
+                            units = "[mosaics]"
+                        }
+                        tableData = tableData + "<tr><td>" + timeStamp + "</td><td>" + inOrOut + "</td><td>" + tempAddress + "</td><td>" + tempAmmount + units + "</td><td>" + message + "</td></tr>"
+                    }
+                    tableData = tableData + "</table>";
+                    document.getElementById('idUnconfirmed').innerHTML = tableData;
+                }
+            );
+            //承認済全トランザクションの取得
+            nem.com.requests.account.transactions.all(endpoint, localStorage.address).then(
+                function(res){
+                    tableData = "<table><tr><th>日時(time)</th><th>方向(in or out)</th><th>アドレス(address)</th><th>残高変動(ammount)</th><th>メッセージ(message)</th></tr>";
+                    for(i = 0; i < res.data.length; i++){
+                        var nemTimeStamp = res.data[i].transaction.timeStamp;
+                        var timeStamp = new Date(Date.UTC(2015, 3, 29, 0, 6, 25, 0) + (nemTimeStamp * 1000));
+                        var tempAddress;
+                        var recipientAddress = res.data[i].transaction.recipient;
+                        var signerPublicKey = res.data[i].transaction.signer;
+                        var senderAddress = nem.model.address.toAddress(signerPublicKey, 104);
+                        var ammount = res.data[i].transaction.amount / 1000000;
+                        var tempAmmount;
+                        var mosaics = res.data[i].transaction.mosaics;
+                        var units;
+                        var message;
+                        //メッセージが空のトランザクションの条件分岐
+                        if(res.data[i].transaction.message == null){
+                            message = undefined;
+                        }else{
+                            message = nem.utils.format.hexToUtf8(res.data[i].transaction.message.payload);
+                        }
+                        var inOrOut;
+                        //送付、受取いずれかによっての条件分岐
+                        if(recipientAddress == localStorage.address){
+                            inOrOut = "受取(in)";
+                            tempAddress = senderAddress;
+                            tempAmmount = ammount;
+                        }else{
+                            inOrOut = "送付(out)";
+                            tempAddress = recipientAddress;
+                            tempAmmount = - 1 * ammount;
+                        }
+                        //トランザクションにモザイクを含むか否かによっての条件分岐(モザイクのトランザクション表示は20190330現時点では上手く扱えていない)
+                        if(mosaics == null){
+                            units = "[nem:xem]";
+                        }else{
+                            units = "[mosaics]"
+                        }
+                        tableData = tableData + "<tr><td>" + timeStamp + "</td><td>" + inOrOut + "</td><td>" + tempAddress + "</td><td>" + tempAmmount + units + "</td><td>" + message + "</td></tr>"
+                    }
+                    tableData = tableData + "</table>";
+                    document.getElementById('idConfirmed').innerHTML = tableData;
+                }
+            );
+        </script>
+    </body>
+</html>

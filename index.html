@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "utf-8">
+        <script src="nem-sdk.js"></script>
+        <script>
+            //アカウント情報未登録の場合、秘密鍵登録ページに自動遷移する関数の定義
+            var moveToRecoverPage = function(){
+                if(localStorage.address == null){
+                    alert('秘密鍵が登録されていないようです。次の画面から秘密鍵を登録してください。(You have not register privateKey yet. You can register it on next page.)');
+                    window.location.href = './recover.html';
+                }
+                else{
+                }
+            }
+            //この画面起動時に上記関数実行
+            window.onload(moveToRecoverPage());
+        </script>
+    </head>
+    <body>
+        <h2>ホーム(Home)</h2>
+        <h3>アドレス(Address)</h3>
+        <p id="idAddress" readonly="readonly" cols="50"></p>
+        <h3>残高(Balances)</h3>
+        <p id="idAllBalance" readonly="readonly" cols="50"></p>
+        <h3>その他の機能はこちらから(Other functions)</h3>
+        <p><button onclick="location.href='./history.html'">履歴画面へ移動</button></p>
+        <p><button onclick="location.href='./transfer.html'">送金画面へ移動</button></p>
+        <p><button onclick="location.href='./recover.html'">アカウント設定</button></p>
+        <script>
+            //アドレスの表示
+            document.getElementById('idAddress').innerHTML = localStorage.address;
+            
+            //保有モザイク残高表示
+            //ライブラリロード
+            var nem = require("nem-sdk").default;
+            //エンドポイント設定
+            var endpoint = nem.model.objects.create('endpoint')(nem.model.nodes.defaultMainnet, nem.model.nodes.defaultPort);
+            //保有モザイク情報保持用jsonの定義
+            var jsonOwnedMosaic;
+            var jsonMosaicDefinition;
+            //全残高情報格納用文字列の定義(テキストエリアに後で設定する)
+            var balanceAll = "";
+            //保有モザイク残高の取得
+            nem.com.requests.account.mosaics.owned(endpoint, localStorage.address).then(
+                //リクエスト帰ってきた時に実行する内容
+                function(res){
+                    jsonOwnedMosaic = res.data;
+                    //保有モザイク定義の取得
+                    nem.com.requests.account.mosaics.allDefinitions(endpoint, localStorage.address).then(
+                        //リクエストが返ってきた時に実行する内容
+                        function(res){
+                            jsonMosaicDefinition = res.data;
+                            //再帰的に各モザイクの詳細情報をチェック
+                            for(i = 0; i < jsonOwnedMosaic.length; i++){
+                                var mosaicAmmount;
+                                var tempMosaicAmmount = jsonOwnedMosaic[i].quantity;
+                                var tempNamespace = jsonOwnedMosaic[i].mosaicId.namespaceId;
+                                var tempMosaicName = jsonOwnedMosaic[i].mosaicId.name;
+                                var tempMosaicDivisibility;
+                                //i番目のモザイクの詳細情報を取得(divisibility=最小単位が10^(-*)の*に当たる数字)
+                                for(j=0; j < jsonMosaicDefinition.length; j++){
+                                    if(tempNamespace == jsonMosaicDefinition[j].id.namespaceId && tempMosaicName == jsonMosaicDefinition[j].id.name){
+                                        tempMosaicDivisibility = jsonMosaicDefinition[j].properties[0].value;
+                                        //最小単位を考慮したモザイク残高の計算
+                                        mosaicAmmount = tempMosaicAmmount / Math.pow(10, tempMosaicDivisibility);
+                                        var tempMosaicInfo = mosaicAmmount + " " + tempNamespace + ":" + tempMosaicName;
+                                        balanceAll = balanceAll + tempMosaicInfo + "</br>";
+                                        document.getElementById('idAllBalance').innerHTML = balanceAll;
+                                    }
+                                    else{
+                                    }
+                                }
+                            }
+                        }
+                    )
+                }
+            );
+        </script>
+    </body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "utf-8">
+        <script src="nem-sdk.js"></script>
+        <script>
+            //ライブラリロード
+            var nem = require("nem-sdk").default;
+            //xem送信トランザクション
+            var transferXEM = function(){
+                //インプットボックスから宛先アドレス, 送付したいxem数量, メッセージを受取
+                var recipientAddress = document.getElementById('idRecipientAddress').value;
+                var ammount = document.getElementById('idAmmount').value;
+                var message = document.getElementById('idMessage').value;
+                //トランザクションオブジェクトの生成(宛先アドレス, 送付したいxem数量を単位xemで記載(1xem→1、μxemではない点に注意), メッセージ)
+                var transferTx = nem.model.objects.create("transferTransaction")(recipientAddress, ammount, message);
+                //パスワード、秘密鍵の準備(パスワードは空白でもOK、秘密鍵は登録済のローカルストレージから読込)
+                var common = nem.model.objects.create("common")("", localStorage.privateKey);
+                //トランザクションオブジェクトに必要な情報を追加
+                var transactionEntity = nem.model.transactions.prepare("transferTransaction")(common, transferTx, nem.model.network.data.mainnet.id);
+                //エンドポイント(メインネット)設定
+                var endpoint = nem.model.objects.create("endpoint")(nem.model.nodes.defaultMainnet, nem.model.nodes.defaultPort);
+                //トランザクションの送信
+                nem.model.transactions.send(common, transactionEntity, endpoint).then(
+                    function(res){
+                        if(res.message == "SUCCESS"){
+                            var transactionResult = "送付に成功しました。(SUCCESS)";
+                            var transactionHashResult = res.transactionHash.data;
+                            var alertMessage = transactionResult + "\nトランザクションのハッシュは(Transaction Hash is)\n" + transactionHashResult + "\nです。";
+                        }
+                        else{
+                            var transactionResult = "送付に失敗しました！(ERR)";
+                            var alertMessage = transactionResult;
+                        }                        
+                        alert(alertMessage);
+                        document.getElementById('idRecipientAddress').value = "";
+                        document.getElementById('idAmmount').value = "";
+                        document.getElementById('idMessage').value = "";
+                    }
+                );
+            }
+        </script>
+    </head>
+    <body>
+        <p><button onclick="location.href='./index.html'">ホームに戻る(Back to Home)</button></p>
+        <h2>送付画面(Transfer)</h2>
+        <p>送付先NEMアドレス(Recipient NEM Address)：</br><input id="idRecipientAddress" type="text" size="50"></input></p>
+        <p>送付量(Ammount)：</br><input id="idAmmount" type="text" size="50"></input>[nem:xem]</p>
+        <p>平文メッセージ(Message Not Encrypted)：</br><input id="idMessage" type="text" size="50"></input></p>
+        <p><button onclick="transferXEM()">送付(Transfer)</button></p>
+    </body>
+</html>
