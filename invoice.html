@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "utf-8">
+        <script src="nem-sdk.js"></script>
+    </head>
+    <body>
+        <p><button onclick="location.href='./index.html'">ホームに戻る(Back to Home)</button></p>
+        <h2>請求(Invoice)</h2>
+        <h3>アドレス(Address)</h3>
+        <p id="idAddress" readonly="readonly" cols="50"></p>
+        <h3>請求額(Ammount)</h3>
+        <p><input id="idAmmount"></input>[nem:xem]</p>
+        <p><button onclick="showQrCode()">請求QRコードを表示(show QR of Invoice)</button></p>
+        <h3>請求QRコード(QR of Invoice)</h3>
+        <p id="idInvoiceQR"></p>
+        <script>
+            //アドレスの表示
+            document.getElementById('idAddress').innerHTML = localStorage.address;
+            //請求QRコードの表示
+            var ammount;
+            var url;
+            var qrBody;
+            function showQrCode(){
+                ammount = document.getElementById('idAmmount').value;
+                ammount = Math.round(ammount * 1000000);
+                var url_start = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl={%22v%22:2,%22type%22:2,%22data%22:{%22addr%22:%22";
+                var url_middle = "%22,%22amount%22:";
+                var url_end = ",%22msg%22:%22%22,%22name%22:%22XEM%20invoice%22}}";
+                url = url_start + localStorage.address + url_middle + ammount + url_end;
+                qrBody = "<img src=" + url + ">";
+                document.getElementById('idInvoiceQR').innerHTML = qrBody;
+            }
+        </script>
+    </body>
+</html>
