@@ -1,6 +1,4 @@
 # nem-simple-wallet-template-for-browser
-nem-simple-wallet-template-for-browserは、NEM-sdkとブラウザのみの環境で、NEMの各種機能をできるだけシンプルに利用できる雛型を目指しています。webアプリケーション作成初心者が独習しつつ作成している、html, javascriptで動作しているwebアプリです。このwebアプリが、NEMに初めて触れるwebエンジニアにとって理解の助けになれば幸いです。本来NEMなら可能な機能が未実装な部分が多いですが、少しずつ、機能を拡張していきたいです。
-nem-simple-wallet-template-for-browser is simple template of web application worked with Google Chrome and NEM-sdk. This application's developper( = me = salaryman-toushi) is an amature programmer. Now I am studying NEM-sdk, javascript, html etc. I am happy that this application code is helpful for web engineers who have experienced NEM service development for the first time. Actually with NEM technology we can do more wonderful things. But now I can't inplement such a function. I will continue to extend the function little by little.
 ## 免責事項 Disclaimer
 このアプリでは、秘密鍵を端末内のブラウザのローカルストレージに暗号化せずに保存します。本番環境でのこのような運用は極めてリスクが高いため、このアプリの利用はあくまでも検証目的に留めて頂き、試用後は確実にブラウザのローカルストレージから秘密鍵等のアカウント情報を削除するよう心がけてください。ブラウザのローカルストレージから秘密鍵をワンクリックで削除する機能は実装されています。
 また、このアプリは初心者が作成しているため、予期せぬバグを多く含んでいる可能性があります。NEMのサービスを扱う場合、基本的には、他の信頼性の高いNEMのウォレットをご使用頂き、このアプリはエンジニアのハンズオン等の限定的な目的で活用して頂くのが良いと思います。(例えばRaccoon Wallet、NEMの公式ウォレット、coinomiウォレット等。)
